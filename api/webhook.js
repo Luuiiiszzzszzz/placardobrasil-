@@ -1,11 +1,18 @@
 export default async function handler(req, res) {
-  if (req.method !== 'POST') return res.status(405).end();
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') return res.status(200).end();
 
   const SUPABASE_URL = process.env.SUPABASE_URL;
   const SUPABASE_KEY = process.env.SUPABASE_KEY;
 
   try {
-    const { type, data } = req.body;
+    const body = req.body || {};
+    const type = body.type;
+    const data = body.data;
+
     if (type === 'payment' && data?.id) {
       const mpRes = await fetch(`https://api.mercadopago.com/v1/payments/${data.id}`, {
         headers: { 'Authorization': `Bearer ${process.env.MP_ACCESS_TOKEN}` }
@@ -32,7 +39,8 @@ export default async function handler(req, res) {
             headers: {
               'apikey': SUPABASE_KEY,
               'Authorization': `Bearer ${SUPABASE_KEY}`,
-              'Content-Type': 'application/json'
+              'Content-Type': 'application/json',
+              'Prefer': 'return=minimal'
             },
             body: JSON.stringify({
               candidato,
@@ -46,6 +54,6 @@ export default async function handler(req, res) {
     res.status(200).json({ ok: true });
   } catch (e) {
     console.error(e);
-    res.status(500).json({ error: e.message });
+    res.status(200).json({ ok: true });
   }
 }
