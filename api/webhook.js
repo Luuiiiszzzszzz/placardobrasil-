@@ -26,6 +26,20 @@ export default async function handler(req, res) {
             },
             body: JSON.stringify({ p_candidato: candidato, p_valor: Number(valor) })
           });
+
+          await fetch(`${SUPABASE_URL}/rest/v1/transacoes`, {
+            method: 'POST',
+            headers: {
+              'apikey': SUPABASE_KEY,
+              'Authorization': `Bearer ${SUPABASE_KEY}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              candidato,
+              valor: Number(valor),
+              payment_id: String(data.id)
+            })
+          });
         }
       }
     }
