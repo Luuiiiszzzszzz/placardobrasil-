@@ -1,8 +1,5 @@
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   const SUPABASE_URL = process.env.SUPABASE_URL;
@@ -20,10 +17,10 @@ export default async function handler(req, res) {
       const payment = await mpRes.json();
 
       if (payment.status === 'approved') {
-        const candidato = payment.metadata?.candidato;
-        const valor = payment.metadata?.valor;
+        const ref = payment.external_reference;
+        if (ref && ref.includes('|')) {
+          const [candidato, valor] = ref.split('|');
 
-        if (candidato && valor) {
           await fetch(`${SUPABASE_URL}/rest/v1/rpc/incrementar_votos`, {
             method: 'POST',
             headers: {
@@ -53,7 +50,6 @@ export default async function handler(req, res) {
     }
     res.status(200).json({ ok: true });
   } catch (e) {
-    console.error(e);
     res.status(200).json({ ok: true });
   }
 }
