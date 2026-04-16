@@ -46,7 +46,6 @@
   </style>
 </head>
 <body>
-
 <div class="login-wrap" id="login-screen">
   <div class="login-box">
     <h1>Painel Admin</h1>
@@ -56,7 +55,6 @@
     <div class="err" id="err"></div>
   </div>
 </div>
-
 <div class="hub" id="hub">
   <div class="hub-header">
     <h1>Hub Admin</h1>
@@ -65,14 +63,12 @@
       <button class="logout" onclick="sair()">Sair</button>
     </div>
   </div>
-
   <div class="metrics">
     <div class="metric"><div class="metric-val" id="m-total">—</div><div class="metric-lbl">Total de votos</div></div>
     <div class="metric"><div class="metric-val green" id="m-arrecadado">—</div><div class="metric-lbl">Arrecadado</div></div>
     <div class="metric"><div class="metric-val red" id="m-lula">—</div><div class="metric-lbl">Votos Lula</div></div>
     <div class="metric"><div class="metric-val blue" id="m-bols">—</div><div class="metric-lbl">Votos Bolsonaro</div></div>
   </div>
-
   <div class="section">
     <h2>Distribuição</h2>
     <div class="bar-track">
@@ -84,7 +80,6 @@
       <span style="color:#003087;font-weight:600;">Bolsonaro</span>
     </div>
   </div>
-
   <div class="section">
     <h2>Transações recentes</h2>
     <table>
@@ -102,10 +97,8 @@
     </table>
   </div>
 </div>
-
 <script>
-  const SENHA = '157Bluecase003*';
-
+  const SENHA = 'admin@placar2025';
   function entrar() {
     const v = document.getElementById('senha').value;
     if (v === SENHA) {
@@ -116,31 +109,26 @@
       document.getElementById('err').textContent = 'Senha incorreta.';
     }
   }
-
   function sair() {
     document.getElementById('senha').value = '';
     document.getElementById('login-screen').style.display = 'flex';
     document.getElementById('hub').classList.remove('active');
   }
-
   async function carregar() {
     try {
       const res = await fetch('/api/admin-dados');
       const data = await res.json();
-
       const total = data.lula + data.bolsonaro;
       document.getElementById('m-total').textContent = total.toLocaleString('pt-BR');
       document.getElementById('m-arrecadado').textContent = 'R$ ' + (data.arrecadado || total).toLocaleString('pt-BR');
       document.getElementById('m-lula').textContent = data.lula.toLocaleString('pt-BR');
       document.getElementById('m-bols').textContent = data.bolsonaro.toLocaleString('pt-BR');
-
       const pL = total === 0 ? 50 : Math.round(data.lula / total * 100);
       const pB = 100 - pL;
       document.getElementById('bar-lula').style.width = pL + '%';
       document.getElementById('bar-bols').style.width = pB + '%';
       document.getElementById('pct-lula').textContent = pL + '%';
       document.getElementById('pct-bols').textContent = pB + '%';
-
       const tbody = document.getElementById('log-body');
       if (!data.transacoes || data.transacoes.length === 0) {
         tbody.innerHTML = '<tr><td colspan="4" class="empty">Nenhuma transação ainda.</td></tr>';
@@ -154,9 +142,7 @@
           </tr>
         `).join('');
       }
-    } catch(e) {
-      console.error(e);
-    }
+    } catch(e) { console.error(e); }
   }
 </script>
 </body>
