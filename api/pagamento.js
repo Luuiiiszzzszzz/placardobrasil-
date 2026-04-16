@@ -7,11 +7,13 @@ export default async function handler(req, res) {
   }
 
   const ACCESS_TOKEN = process.env.MP_ACCESS_TOKEN;
-  const BASE_URL = process.env.BASE_URL || 'https://seusite.vercel.app';
+  const BASE_URL = process.env.BASE_URL || 'https://project-ua5yo.vercel.app';
+
+  const nome = candidato === 'lula' ? 'Lula' : 'Bolsonaro';
 
   const preference = {
     items: [{
-      title: `Voto para ${candidato === 'lula' ? 'Lula' : 'Bolsonaro'}`,
+      title: `Voto para ${nome}`,
       quantity: 1,
       currency_id: 'BRL',
       unit_price: Number(valor)
@@ -22,7 +24,8 @@ export default async function handler(req, res) {
       pending: `${BASE_URL}`
     },
     auto_return: 'approved',
-    metadata: { candidato, valor: Number(valor) }
+    external_reference: `${candidato}|${valor}`,
+    notification_url: 'https://project-ua5yo.vercel.app/api/webhook'
   };
 
   try {
